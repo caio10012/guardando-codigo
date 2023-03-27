@@ -1,0 +1,74 @@
+package br.jogoteca.system.controllers;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import br.jogoteca.system.data.GenericRepository;
+import br.jogoteca.system.data.IGenericRepository;
+import br.jogoteca.system.exceptions.ElementAlreadyExistsException;
+import br.jogoteca.system.exceptions.ElementDoesNotExistException;
+import br.jogoteca.system.exceptions.ElementWithSameNameExistsException;
+import br.jogoteca.system.models.Game;
+import br.jogoteca.system.models.GameItem;
+import br.jogoteca.system.models.Genre;
+import br.jogoteca.system.models.Pedido;
+import br.jogoteca.system.models.Usuario;
+
+
+public class PedidoController2 {
+
+	private IGenericRepository<Pedido> pedidoRepositorio2;
+	private int lastId = 1;
+	
+	private static PedidoController2 instance;
+	
+	
+	
+	private PedidoController2() {
+		this.pedidoRepositorio2 = new GenericRepository<>("Pedidos.dat");
+		lastId = pedidoRepositorio2.read().size();
+		System.out.println(lastId);
+	}
+	
+	public static PedidoController2 getInstance() {
+		if (instance == null) {
+			instance = new PedidoController2();
+		}
+		return instance;
+	}
+	
+	public void adicionarPedido(int id,LocalDateTime momentos,List<GameItem> itens) {
+		Pedido pedido = new Pedido(id,momentos,itens);
+		try {
+			pedidoRepositorio2.insert(pedido);
+		} catch (ElementAlreadyExistsException e) {
+			System.out.println("erro");
+		}
+	}
+	
+	public Pedido buscarPeloId(int id) throws ElementDoesNotExistException{
+		return pedidoRepositorio2.read().stream().filter(pedido -> pedido.getId() == id).findFirst().orElse(null);
+	
+}
+	
+	public void removerPeloId(int id) throws ElementDoesNotExistException {
+		Pedido pedido = buscarPeloId(id);
+		try {
+			pedidoRepositorio2.delete(pedido);
+			lastId--;
+		} catch (Exception e) {
+			System.out.println("erro");
+		}
+	}
+	
+	public void updatePedidoId(int id, LocalDateTime momentos,GameItem pedido) throws ElementDoesNotExistException{			
+		Pedido pedido1 = buscarPeloId(id);
+		if (pedido1 != null) {		
+			if (momentos != null)
+				pedido1.setMomento(momentos);				
+			pedidoRepositorio2.update(pedido1);
+			}		
+		}
+	}	
+
