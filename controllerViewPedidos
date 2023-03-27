@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import br.jogoteca.system.controllers.PedidoController;
-import br.jogoteca.system.controllers.PedidoController2;
+
 import br.jogoteca.system.exceptions.ElementDoesNotExistException;
-import br.jogoteca.system.models.Pedido;
+
 import br.jogoteca.system.models.Usuario;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -43,19 +43,19 @@ public class PedidosController implements Initializable {
 	@FXML
 	private Button deleteButton;
 	
-	  @FXML
-	    private DatePicker datePicker;
+	@FXML
+	private DatePicker datePicker;
 
 	
 	 @FXML
 	 private TextField barraDeBusca;
 
 	private List<Usuario> elements = new ArrayList<>();
-	private List<Pedido> elements1 = new ArrayList<>();
+	
 	
 	PedidoController pedidos = PedidoController.getInstance();
-	PedidoController2 pedidos2 = PedidoController2.getInstance();
-
+	
+//teste
 	//@FXML
 	//void addButton(MouseEvent event) {
 		//String id = nameTextField.getText();
@@ -74,20 +74,17 @@ public class PedidosController implements Initializable {
 		elements.add(element);
 		elementListView.getItems().add(element.getPedido());
 		elementListView.getItems().add(element.getId());		
-		pedidos.adicionarPedido(pedido,id);
+		
 	}
-	 @FXML
-	    void datePicker(ActionEvent event) {
-		 	LocalDate localdate = datePicker.getValue();
-		 	elementListView.getItems().add(localdate.parse(text));
-	    }
+	 
 		 	           	  
 	
 	@FXML
 	void deleteButton(MouseEvent event) {
 		int selectedIndex = elementListView.getSelectionModel().getSelectedIndex();
 		if (selectedIndex != -1) {	
-			elementListView.getItems().remove(selectedIndex);			
+			elementListView.getItems().remove(selectedIndex);	
+			elements.remove(selectedIndex);
 		}
 	}
 	
@@ -118,8 +115,7 @@ public class PedidosController implements Initializable {
 		 for (String item : elementListView.getItems()) {
 			    if (item.toLowerCase().contains(searchText)) {
 			    	elementListView.getSelectionModel().select(item);	
-			    	int id = 0;
-					pedidos2.buscarPeloId(id);
+			    					
 			    }
 			}
 	    }
