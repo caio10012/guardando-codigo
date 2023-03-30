@@ -1,0 +1,90 @@
+package br.jogoteca.system.controllers;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import br.jogoteca.system.data.GenericRepository;
+import br.jogoteca.system.exceptions.ElementAlreadyExistsException;
+import br.jogoteca.system.exceptions.ElementDoesNotExistException;
+import br.jogoteca.system.exceptions.ElementWithSameNameExistsException;
+import br.jogoteca.system.models.GameItem;
+import br.jogoteca.system.models.Pedido;
+import br.jogoteca.system.models.Usuario;
+
+
+public class PedidoCompraController {
+		
+	private GenericRepository<Pedido> comprasRepository;
+	private int lastId;
+
+	private static PedidoCompraController instance;
+
+	private PedidoCompraController() {
+		this. comprasRepository = new GenericRepository<>("PedidoCompra.dat");
+		lastId =  comprasRepository.read().size();
+	}
+
+	public static PedidoCompraController getInstance() {
+		if (instance == null) {
+			instance = new PedidoCompraController();
+		}
+		return instance;
+	}
+	
+	public void adicionarCompras(LocalDate momento, List<GameItem> itens, Usuario usuario) {
+		Pedido compras = new Pedido(lastId +1,momento,itens,usuario);
+		try {
+			comprasRepository.insert(compras);
+			lastId++;			
+		} catch (ElementAlreadyExistsException e) {
+			System.out.println("erro");
+		}
+	}
+	
+	
+	public Pedido buscarPeloId(int id) throws ElementDoesNotExistException{
+		return comprasRepository.read().stream().filter(pedido -> pedido.getId() == id).findFirst().orElse(null);		
+}
+	
+	public Pedido buscarPeloItem(List<GameItem> itens) throws ElementDoesNotExistException{
+		return comprasRepository.read().stream().filter(pedido -> pedido.getItens().equals(itens)).findFirst().orElse(null);		
+}
+	
+	
+	public void updateGameById(int id, LocalDate momento, List<GameItem> itens, Usuario usuario)throws ElementDoesNotExistException, ElementWithSameNameExistsException {			 
+		Pedido pedido = buscarPeloId(id);
+		if (pedido != null) {
+			if (itens != null)
+				pedido.setItens(itens);			
+			if (usuario != null)
+				pedido.setUsuario(usuario);
+			if (momento != null)
+				pedido.setMomento(momento);
+			comprasRepository.update(pedido);
+		}
+	}		
+	
+	
+	
+	public void removerPedidoId(int id) throws ElementDoesNotExistException {
+		Pedido pedido = buscarPeloId(id);			
+			try {
+				comprasRepository.delete(pedido);
+				lastId--;
+			} catch (Exception e) {
+				System.out.println("erro");
+			}
+		}
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+}
